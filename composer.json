@@ -1,6 +1,11 @@
 {
     "require": {
-        "google/cloud-speech": "^0.14",
-        "google/cloud-language": "^0.14"
+        "google/cloud-speech": "~0.14",
+        "google/cloud-language": "~0.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "h4de5\\BabyDol\\": "service/"
+        }
     }
 }
