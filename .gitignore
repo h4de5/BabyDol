@@ -1,5 +1,5 @@
 @eaDir/
-*-token-*.json
+*-token*.json
 composer.lock
 vendor/
 uploads/

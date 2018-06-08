@@ -1,6 +1,6 @@
 <?php
 
-namespace h4de5\BabyDol\Service;
+namespace h4de5\BabyDol;
 
 class base {
 
