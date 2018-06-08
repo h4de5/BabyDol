@@ -1,0 +1,161 @@
+
+
+<!--
+	google speech api reference
+	https://cloud.google.com/speech-to-text/docs/reference/rpc/google.cloud.speech.v1
+	https://cloud.google.com/speech-to-text/docs/sync-recognize
+	https://cloud.google.com/speech-to-text/docs/reference/libraries#client-libraries-install-php
+-->
+
+
+<!--
+	WebRTC polyfill 
+	https://webrtcexperiment-webrtc.netdna-ssl.com/MediaStreamRecorder.js
+	we use: convertoFloat32ToInt16 and PCM, blob handling from there
+
+	examples:
+	https://www.webrtc-experiment.com/msr/audio-recorder.html
+	https://github.com/streamproc/MediaStreamRecorder/blob/master/demos/audio-recorder.html
+	https://github.com/muaz-khan/RecordRTC
+
+	MediaStreamRecorder
+	https://github.com/streamproc/MediaStreamRecorder#upload-to-php-server
+
+	Exmaples:
+	https://air.ghost.io/recording-to-an-audio-file-using-html5-and-js/
+	http://www.codepool.biz/capture-record-audio-html5.html
+
+	something useing a service worker?
+	https://github.com/mattdiamond/Recorderjs
+
+-->
+
+<!-- 
+	stop/pause audio player
+	https://stackoverflow.com/questions/14834520/html5-audio-stop-function
+-->
+
+<!-- tensorflow with audio - also links to datasets and tutorial https://www.iotforall.com/tensorflow-sound-classification-machine-learning-applications/
+-->
+
+<!--
+An example web application using the Lex JavaScript SDK to send and receive audio from the Lex PostContent API. 
+using a service worker..
+	https://github.com/awslabs/aws-lex-browser-audio-capture
+
+-->
+<!--
+	audio file to php
+	https://github.com/jwagener-soundcloud/recorder.js
+	https://stackoverflow.com/questions/16810450/html5-getusermedia-record-audio-save-to-web-server-after-certain-time
+-->
+
+<!--
+	RT Audio output 
+	https://www.w3.org/TR/audio-output/
+-->
+
+<!--
+audio 
+https://addpipe.com/blog/audio-constraints-getusermedia/
+
+-->
+
+
+<!-- google example for audio in and out
+	https://developers.google.com/web/fundamentals/media/recording-audio/ -->
+		<p>audio file via input:</p>
+		<input type="file" accept="audio/*" capture id="recorder">
+		<audio id="player" controls></audio>
+		<script>
+		
+
+			var recorder = document.getElementById('recorder');
+			var player = document.getElementById('player');
+		
+			recorder.addEventListener('change', function(e) {
+				var file = e.target.files[0];
+				// Do something with the audio file.
+				player.src =  URL.createObjectURL(file);
+			});
+	</script>
+
+<!-- html from 2013 https://github.com/cwilso/pitchdetect -->
+
+<!-- example for video -->
+<device type="media" onchange="update(this.data)"></device>
+<video autoplay></video>
+<script>
+  function update(stream) {
+    document.querySelector('video').src = stream.url;
+  }
+</script>
+
+
+<input type="file" accept="audio/*;capture=microphone">
+
+
+<!-- 
+	getUserMedia info
+	see more: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices
+	compatibility: https://www.chromestatus.com/features/4906859072847872
+	common errors: https://addpipe.com/blog/common-getusermedia-errors/ 
+-->
+
+
+<!-- example from 2016 http://www.codepool.biz/capture-record-audio-html5.html -->
+
+
+<!-- example from 2012-2016 https://www.html5rocks.com/de/tutorials/getusermedia/intro/#toc-webaudio-api -->
+<script>
+	var context = new window.webkitAudioContext();
+
+	navigator.webkitGetUserMedia({audio: true}, function(stream) {
+	var microphone = context.createMediaStreamSource(stream);
+	var filter = context.createBiquadFilter();
+
+	// microphone -> filter -> destination.
+	microphone.connect(filter);
+	filter.connect(context.destination);
+	}, onFailSoHard);
+</script>
+
+
+<!-- example from 2012: https://developers.google.com/web/updates/2012/09/Live-Web-Audio-Input-Enabled -->
+
+<script>
+	// success callback when requesting audio input stream
+	function gotStream(stream) {
+		window.AudioContext = window.AudioContext || window.webkitAudioContext;
+		var audioContext = new AudioContext();
+
+		// Create an AudioNode from the stream.
+		var mediaStreamSource = audioContext.createMediaStreamSource( stream );
+
+		// Connect it to the destination to hear yourself (or any other node for processing!)
+		mediaStreamSource.connect( audioContext.destination );
+	}
+
+	navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+	navigator.getUserMedia( {audio:true}, gotStream );
+</script>
+
+
+API Console:
+
+https://developers.google.com/apis-explorer/?hl=de#p/texttospeech/v1beta1/texttospeech.text.synthesize?fields=audioContent&_h=4&resource=%257B%250A++%2522voice%2522%253A+%250A++%257B%250A++++%2522languageCode%2522%253A+%2522de-DE%2522%250A++%257D%252C%250A++%2522input%2522%253A+%250A++%257B%250A++++%2522text%2522%253A+%2522Hallo+wie+geht+es+dir%253F%2522%250A++%257D%252C%250A++%2522audioConfig%2522%253A+%250A++%257B%250A++++%2522audioEncoding%2522%253A+%2522mp3%2522%250A++%257D%250A%257D&
+Text-To-Speech:
+{
+  "voice": 
+  {
+    "languageCode": "de-DE"
+  },
+  "input": 
+  {
+    "text": "Hallo wie geht es dir?"
+  },
+  "audioConfig": 
+  {
+    "audioEncoding": "mp3"
+  }
+}

@@ -1,0 +1,106 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+	<meta charset="utf-8">
+	<title>BabyDol - Your Baby's Dolmetscher</title>
+	<meta name="description" content="">
+	<meta name="HandheldFriendly" content="True">
+	<meta name="MobileOptimized" content="320">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta http-equiv="cleartype" content="on">
+
+	<!-- Add to homescreen for Chrome on Android -->
+	<meta name="mobile-web-app-capable" content="yes">
+
+	<!-- For iOS web apps. Delete if not needed. https://github.com/h5bp/mobile-boilerplate/issues/94 -->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="">
+
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.min.css">
+	<link rel="stylesheet" href="css/main.css">
+
+</head>
+
+<body>
+
+	<section class="header">
+		<h1>Baby Dolmetscher (wip)</h1>
+	</section>
+	<section class="content">
+		<h4>HowTo</h4>
+		<ul>
+			<li>Press "start record"</li>
+			<li>Allow access to your microphone</li>
+			<li>Press "play button" to echo your self</li>
+			<li>WIP..</li>
+			<li>select one of the suggestions, or enter your own work to teach the algorithm</li>
+			<li>see a picture and listen to the correct spelling of the word</li>
+		</ul>
+
+		<input type="button" id="record" value="start record" />
+		<br />
+		<audio id="player" controls></audio>
+	</section>
+	<section class="footer">
+		<h4>HowIs</h4>
+		<ul>
+			<li>on document.ready</li>
+			<ul>
+				<li> adds one-time event to start-record button</li>
+				<li> onclick start-record</li>
+				<ul>
+					<li> getPermission is called</li>
+					<li> logs supported devices</li>
+					<li> asks for audio permissions</li>
+					<ul>
+						<li> onsuccess</li>
+						<ul>
+							<li> calls startRecord</li>
+							<li> sets audio player source</li>
+							<li> adds one-time event to stop-record button</li>
+							<li> converts audio input to chunk</li>
+							<li> sends chunk over xmlhttprequest to server</li>
+						</ul>
+						<li> onfailed</li>
+						<ul>
+							<li> logs error</li>
+							<li> calls stopRecord</li>
+						</ul>
+					</ul>
+				</ul>
+				<li> onclick stop-record</li>
+				<ul>
+					<li> stops audio player</li>
+					<li> disconnects processor</li>
+				</ul>
+			</ul>
+			<li>call to server</li>
+			<ul>
+				<li> checks for upload file + filename</li>
+				<ul>
+					<li> saves chunk</li>
+					<li> appends chunk to target file</li>
+				</ul>
+				<li> takes target file and sends it to google</li>
+				<li> outputs transcript</li>
+			</ul>
+		</ul>
+		<h4>RoadMap</h4>
+		<ul>
+				<li>automatically stop record once no input comes</li>
+				<li>sends stop-append-file command to server</li>
+				<li>gets transctions from server</li>
+				<li>websocket server ?!</li>
+		</ul>
+		</section>
+
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.slim.min.js"></script>
+	<script src="js/main.js"></script>
+
+
+</body>
+
+</html>

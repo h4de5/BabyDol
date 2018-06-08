@@ -1,0 +1,19 @@
+body { font: 14pt 'Roboto', sans-serif;}
+
+section {
+	text-align: left;
+	margin-left:auto;
+	margin-right:auto;
+	margin: 0px auto;
+}
+section.header {
+	width: 90%;
+}
+section.content {
+	width: 90%;
+}
+section.footer {
+	width: 90%;
+	font-size: smaller;
+	color: grey;
+}
