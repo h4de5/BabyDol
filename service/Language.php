@@ -8,6 +8,8 @@ use Google\Cloud\Language\LanguageClient;
 // see: https://github.com/GoogleCloudPlatform/google-cloud-php#google-cloud-natural-language-beta
 // supported languages:
 // see: https://cloud.google.com/natural-language/docs/languages
+// API Ref
+// see: http://googlecloudplatform.github.io/google-cloud-php/#/docs/google-cloud/v0.58.1/language/languageclient
 class Language {
 
     private $languageClient;

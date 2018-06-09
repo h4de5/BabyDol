@@ -10,6 +10,9 @@ define("LANGUAGE_CODE", 'de-DE');
 putenv('GOOGLE_APPLICATION_CREDENTIALS=/volume1/web/dev/babydol/BabyDol-cloud-token-1074b826b0e5.json');
 
 use Google\Cloud\Core\ServiceBuilder;
+use Google_Service_Customsearch;
+use Google_Client;
+
 use h4de5\BabyDol\Upload;
 use h4de5\BabyDol\Speech;
 use h4de5\BabyDol\Language;
@@ -40,10 +43,19 @@ if($upload->isUpload('audio-filename', 'audio-blob')) {
 
         // $language->analyze($transcript);
         $language->anotate($transcript);
-        
-        
     }
     
+
+    $client = new Google_Client();
+    //$client->setAuthConfig('/volume1/web/dev/babydol/BabyDol-cloud-token-1074b826b0e5.json');
+
+    // $client->addScope(Google_Service_Drive::DRIVE);
+
+    $service = new Google_Service_Customsearch($client);
+
+    $optParams = array("cx"=>self::GCSE_SEARCH_ENGINE_ID);    
+    $results = $service->cse->listCse("lol cats", $optParams);
+
 }
 
 

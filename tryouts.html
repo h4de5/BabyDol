@@ -1,10 +1,49 @@
 
 
 <!--
+for non cloud api access use:
+https://github.com/google/google-api-php-client
+
+examples: https://github.com/google/google-api-php-client/tree/master/examples
+
+
+google custom search image search api
+
+https://github.com/google/google-api-php-client-services
+
+conflicts with installation of php-api-client
+> leave them aout
+# composer require google/apiclient-services:dev-master
+
+instead install newest apiclient and get along with right services:
+
+composer require "google/apiclient"
+
+full example:
+https://stackoverflow.com/questions/41592249/how-to-use-php-client-for-google-custom-search-engine
+
+
+https://github.com/google/google-api-php-client-services/blob/master/src/Google/Service/Customsearch.php
+https://github.com/google/google-api-php-client-services/tree/master/src/Google/Service/Customsearch
+
+
+-->
+
+
+websockets
+http://socketo.me/docs/hello-world
+
+
+
+<!--
 	google speech api reference
 	https://cloud.google.com/speech-to-text/docs/reference/rpc/google.cloud.speech.v1
 	https://cloud.google.com/speech-to-text/docs/sync-recognize
 	https://cloud.google.com/speech-to-text/docs/reference/libraries#client-libraries-install-php
+
+	another way to call speech api?
+	https://github.com/google/google-api-php-client-services/tree/master/src/Google/Service/CloudSpeechAPI
+
 -->
 
 
@@ -141,8 +180,28 @@ https://addpipe.com/blog/audio-constraints-getusermedia/
 </script>
 
 
-API Console:
+<!--
 
+	Google cloud API client library in php:
+
+https://github.com/GoogleCloudPlatform/google-cloud-php
+
+https://developers.google.com/api-client-library/php/
+
+
+-->
+
+
+<!--
+Google Cloud Text-to-Speech TTS
+da gibt es kein PHP library dafür .. 
+
+geht nicht:
+composer info "google/cloud-texttospeech"
+
+https://github.com/GoogleCloudPlatform/python-docs-samples/tree/master/texttospeech/cloud-client
+
+API Console:
 https://developers.google.com/apis-explorer/?hl=de#p/texttospeech/v1beta1/texttospeech.text.synthesize?fields=audioContent&_h=4&resource=%257B%250A++%2522voice%2522%253A+%250A++%257B%250A++++%2522languageCode%2522%253A+%2522de-DE%2522%250A++%257D%252C%250A++%2522input%2522%253A+%250A++%257B%250A++++%2522text%2522%253A+%2522Hallo+wie+geht+es+dir%253F%2522%250A++%257D%252C%250A++%2522audioConfig%2522%253A+%250A++%257B%250A++++%2522audioEncoding%2522%253A+%2522mp3%2522%250A++%257D%250A%257D&
 Text-To-Speech:
 {
@@ -159,3 +218,4 @@ Text-To-Speech:
     "audioEncoding": "mp3"
   }
 }
+-->
