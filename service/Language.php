@@ -23,7 +23,7 @@ class Language {
         ]);
     }   
 
-    function analyze($text) {
+    public function analyze($text) {
         
         echo "analyzing: $text ..<br />";
         // Analyze a sentence.
@@ -35,10 +35,7 @@ class Language {
 
     }
 
-    function anotate($text) {
-        
-        echo "analyzing: $text ..<br />";
-
+    public function anotate($text) {
         $options = [
             'features' => [
                 'syntax', 
@@ -47,21 +44,29 @@ class Language {
             ]
         ];
         // Analyze a sentence.
-        // $annotation = $this->languageClient->annotateText($text);
-        $annotation = $this->languageClient->annotateText($text, $options);
+        $anotation = $this->languageClient->annotateText($text, $options);
 
         // Check the sentiment.
         // not available in de_de
-        // if ($annotation->sentiment() > 0) {
+        // if ($anotation->sentiment() > 0) {
         //     echo "This is a positive message.<br />".PHP_EOL;
         // }
 
         // Parse the syntax.
-        $tokens = $annotation->tokensByTag('NOUN');
+        // get nouns from text
+        
 
+        /*
         foreach ($tokens as $token) {
             echo $token['text']['content'] . "<br />".PHP_EOL;
         }
+        */
+        return $anotation;
+    }
+
+    public function getNouns($anotation) {
+        $tokens = $anotation->tokensByTag('NOUN');
+        return $tokens; 
     }
 
 

@@ -93,7 +93,7 @@ class Speech {
      *
      * @return string the text transcription
      */
-    function streamingRecognize($audioFile, $encoding, $sampleRateHertz)
+    public function streamingRecognize($audioFile, $encoding, $sampleRateHertz)
     {
         if (!defined('Grpc\STATUS_OK')) {
             throw new \Exception('Install the grpc extension ' .

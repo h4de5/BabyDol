@@ -82,7 +82,7 @@ $( document ).ready(function() {
 
 		processor.onaudioprocess = function(audioProcessingEvent) {
 		  // Do something with the data, i.e Convert this to WAV
-			console.log(audioProcessingEvent.inputBuffer);
+			// console.log(audioProcessingEvent.inputBuffer);
 			
 			// see: https://webrtcexperiment-webrtc.netdna-ssl.com/MediaStreamRecorder.js
 			sendStream(convertBufferToStream(audioProcessingEvent.inputBuffer));
@@ -115,8 +115,10 @@ $( document ).ready(function() {
 		// When the buffer source stops playing, disconnect everything
 		source.onended = function() {
 			console.log("source has ended..");
-			source.disconnect(processor);
-			processor.disconnect(context.destination);
+			// source.disconnect(processor);
+			// processor.disconnect(context.destination);
+
+			stopRecord();
 		}
 				
 		$record.val("recording..");
@@ -207,21 +209,31 @@ $( document ).ready(function() {
 		formData.append(fileType + '-filename', fileName);
 		formData.append(fileType + '-blob', blob);
 
+		var jqxhr = $.ajax({
+			url: 'server.php',
+			data: formData,
+			processData: false,
+			contentType: false,
+			type: 'POST',
+			success: function(data){
+				console.log("success: ", data);
+			}
+		  })
+		  	.done(function() {
+				console.log( "second success" );
+			})
+			.fail(function() {
+				console.log( "error" );
+			});
+
+	};
+
+	// send stop command to server, gets json
+	var evaluateStream = function() {
 		xhr('server.php', formData, function (fileURL) {
 			window.open(fileURL);
 		});
-
-		function xhr(url, data, callback) {
-			var request = new XMLHttpRequest();
-			request.onreadystatechange = function () {
-				if (request.readyState == 4 && request.status == 200) {
-					callback(location.href + request.responseText);
-				}
-			};
-			request.open('POST', url);
-			request.send(data);
-		}
-	};
+	}
 
 	// add event to button
 	$record.one('click', getPermission);
