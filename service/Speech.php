@@ -63,6 +63,7 @@ class Speech {
         $options = [
             'encoding' => $encoding,
             'sampleRateHertz' => $sampleRateHertz,
+            'profanityFilter' => true,
         ];
 
         // Recognize the speech in an audio file.

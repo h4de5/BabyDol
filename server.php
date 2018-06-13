@@ -26,54 +26,55 @@ if($upload->isUpload('audio-filename', 'audio-blob')) {
 
 } else {
 
+    
+
     // _process_
     // speech-to-text .. get full transcriptions
     // natural language .. get nouns from each transcript
     //  .. also get articles for each noun?!
     // custom search .. get image for each noun
-    // text-to-speech .. get sound for each article+noun
-    // return array (result[transcript][noun][article,image,sound] 
-    // return array (results[noun][article,image,sound])
+    // text-to-speech .. get sound for each article+noun > will be done on client side
+    // return array (results[transcript,[{noun,article,image}])
     // as json..
 
+    $result = [];
     $words = [];
+    $fulltranscript = [];
 
     // if no upload, run recognition
     $targetFile = "uploads/target.pcm";
     $speech = new Speech(PROJECT_ID, LANGUAGE_CODE);
-    $fulltranscript = $speech->recognize($targetFile, "LINEAR16", 44100);
+    // $transcript = $speech->recognize($targetFile, "LINEAR16", 16000);
+    $transcriptObj = $speech->recognize($targetFile, "LINEAR16", 44100);
+
+    //var_dump($fulltranscript);
 
     // if something has been found, return it
-    if(!empty($fulltranscript)) {
-        $transcripts = $speech->getTopResults($fulltranscript);
+    if(!empty($transcriptObj)) {
+        $sentences = $speech->getTopResults($transcriptObj);
+        $transcript = implode(".", $sentences);
+
+        $result['transcript'] = $transcript;
 
         // echo "Transcriptions: <br />";
         // echo implode("<br />". PHP_EOL, $transcripts);
         // echo "<br />". PHP_EOL;
-
-        $language = new Language(PROJECT_ID, LANGUAGE_CODE);
-
-        // for each transcript
-        foreach ($transcripts as $idx => $transcript) {
-
-            // $language->analyze($transcript);
-            $anotation = $language->anotate($transcript);
-
-            if(!empty($anotation)) {
-
-                $nouns = $language->getNouns($anotation);
-                foreach ($nouns as $idx2 => $noundata) {
-                    $noun = $noundata['text']['content'];
-                    $words[$noun] = ['noun' => $noun];
-                }
-
-            } else {
-                // no nouns found
-            }
-        }
     } else {
-        // no transcript could be found
+        // no transcript found
+        $result['error'][] = "no transcript found";
+    }
 
+    if(!empty($transcript)) {
+        $language = new Language(PROJECT_ID, LANGUAGE_CODE);
+        $anotationObj = $language->anotate($transcript);
+        // $language->analyze($transcript);
+    }
+
+    if(!empty($anotationObj)) {
+        $words = $language->getNouns($anotationObj);
+    } else {
+        // no nouns found
+        $result['error'][] = "no nouns found";
     }
 
     // $words['haus'] = ['noun' => 'haus'];
@@ -123,13 +124,14 @@ if($upload->isUpload('audio-filename', 'audio-blob')) {
         }
     }
 
+    header('Content-type:application/json;charset=utf-8');
     // var_dump($words);
     if(!empty($words)) {
-        header('Content-type:application/json;charset=utf-8');
-        echo json_encode($words);
+        
+        $result['words'] = array_values($words);
+        echo json_encode($result);
     } else {
-        http_response_code(500);
-        echo 'error';
+        echo json_encode($result);
     }
     
 

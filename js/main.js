@@ -8,51 +8,119 @@
 $( document ).ready(function() {
 	// input audio stream
 	var streams;
+	var mediaRecorder;
 
 	// get player
 	// var player = document.getElementById('player');
 	var player = $('#player').get(0);
 	var $record = $('#record');
+	var $speak = $('#speak');
 
 	// see explanation: https://stackoverflow.com/a/15104053/2115610
-	var context = new AudioContext();
+	// NOT IN USE
+	//var context = new AudioContext();
 	// var source = context.createMediaStreamSource(stream);
-	var source;
+	//var source;
 	// var source = context.createBufferSource();
-	var processor = context.createScriptProcessor(16384, 1, 1);
+	//var processor = context.createScriptProcessor(16384, 1, 1);
 
-	// polyfill - some browsers does not support mediaDevices
-	var prepareMediaDevices = function() {
-		if (navigator.mediaDevices === undefined) {
-			navigator.mediaDevices = {};
-		}
-
-		// Some browsers partially implement mediaDevices. We can't just assign an object
-		// with getUserMedia as it would overwrite existing properties.
-		// Here, we will just add the getUserMedia property if it's missing.
-		if (navigator.mediaDevices.getUserMedia === undefined) {
-			
-			navigator.mediaDevices.getUserMedia = function(constraints) {
-		
-				// First get ahold of the legacy getUserMedia, if present
-				var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-		
-				// Some browsers just don't implement it - return a rejected promise with an error
-				// to keep a consistent interface
-				if (!getUserMedia) {
-					return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
-				}
-		
-				// Otherwise, wrap the call to the old navigator.getUserMedia with a Promise
-				return new Promise(function(resolve, reject) {
-					getUserMedia.call(navigator, constraints, resolve, reject);
-				});
-			}
-		}
+	////// WEBRTC MediaRecorder
+	// see: https://github.com/streamproc/MediaStreamRecorder
+	// initializes mediaDevices for recorder
+	var captureUserMedia = function (mediaConstraints, successCallback, errorCallback) {
+		navigator.mediaDevices.getUserMedia(mediaConstraints).then(successCallback).catch(errorCallback);
 	};
+
+	var onMediaSuccess = function(stream) {
+
+		/*
+		var audio = document.createElement('audio');
+		audio = mergeProps(audio, {
+			controls: true,
+			muted: true
+		});
+		audio.srcObject = stream;
+		audio.play();
+		*/
+
+		// audiosContainer.appendChild(audio);
+		// audiosContainer.appendChild(document.createElement('hr'));
+		mediaRecorder = new MediaStreamRecorder(stream);
+		// mediaRecorder.stream = stream;
+
+		mediaRecorder.recorderType = StereoAudioRecorder;
+		mediaRecorder.mimeType = 'audio/pcm';
+
+		// var recorderType = document.getElementById('audio-recorderType').value;
+		// if (recorderType === 'MediaRecorder API') {
+		// 	mediaRecorder.recorderType = MediaRecorderWrapper;
+		// }
+		// if (recorderType === 'WebAudio API (WAV)') {
+		// 	mediaRecorder.recorderType = StereoAudioRecorder;
+		// 	mediaRecorder.mimeType = 'audio/wav';
+		// }
+		// if (recorderType === 'WebAudio API (PCM)') {
+		// 	mediaRecorder.recorderType = StereoAudioRecorder;
+		// 	mediaRecorder.mimeType = 'audio/pcm';
+		// }
+		// don't force any mimeType; use above "recorderType" instead.
+		// mediaRecorder.mimeType = 'audio/webm'; // audio/ogg or audio/wav or audio/webm
+		mediaRecorder.audioChannels = 1;
+		//mediaRecorder.bufferSize = 1024 * 16;
+		mediaRecorder.sampleRate = 44100;
+		//mediaRecorder.sampleRate = 16000;
+		
+
+		mediaRecorder.ondataavailable = function(blob) {
+			sendStream(blob);
+		};
+		mediaRecorder.onstop = function() {
+			// recording has been stopped.
+			console.log('recording has been stopped.');
+			//stopRecord();
+		};
+
+		// get blob after specific time interval ms
+		mediaRecorder.start(1000);
+
+		$record.val("recording..");
+		$record.one('click', stopRecord);
+
+	};
+
+	var onMediaError = function(err) {
+		stopRecord();
+		console.log("Stream access failed: ", err.message);
+	}
+
+	var sendStream = function(blob) {
+		
+		var file = new File([blob], 'msr-' + (new Date).toISOString().replace(/:|\./g, '-') + '.pcm', {
+			type: 'audio/pcm'
+		});
+	
+		// create FormData
+		var formData = new FormData();
+		formData.append('audio-filename', file.name);
+		formData.append('audio-blob', blob);
+	
+		makeHttpRequest(formData);
+	};
+
+	var stopRecord = function() {
+		console.log('stopRecord..');
+
+		// TODO - send concat command to server
+		mediaRecorder.stop();
+		$record.val("start record");
+		$record.one('click', getPermission);
+	};
+
+
 
 	// if user allowed access
 	// getting stream from browser
+	// NOT IN USE
 	var startRecord = function(stream) {
 		console.log('startRecord..');
 
@@ -67,6 +135,7 @@ $( document ).ready(function() {
 		// 	}
 		// }
 
+		
 		// echo playback
 		if (window.URL) {
 			player.src = window.URL.createObjectURL(stream);
@@ -139,6 +208,9 @@ $( document ).ready(function() {
 		if(navigator.mediaDevices) {
 			console.log('supported constraints:', navigator.mediaDevices.getSupportedConstraints());
 
+			captureUserMedia({audio: true}, onMediaSuccess, onMediaError);
+
+			/*
 			navigator.mediaDevices.getUserMedia(
 				{audio: true, video: false}
 			)
@@ -147,6 +219,7 @@ $( document ).ready(function() {
 				stopRecord();
 				console.log("Stream access failed: ", err.message);
 			});
+			*/
 		} else {
 			stopRecord();
 			console.log("Stream access failed: no mediaDevices found - update chrome?");
@@ -154,7 +227,8 @@ $( document ).ready(function() {
 	};
 
 	// stop record
-	var stopRecord = function() {
+	// NOT IN USe
+	var stopRecord_notinuse = function() {
 		console.log('stopRecord..');
 
 		player.pause();
@@ -171,16 +245,33 @@ $( document ).ready(function() {
 		$record.one('click', getPermission);
 	};
 
+	var speak = function(text ) {
+		var msg = new SpeechSynthesisUtterance(text);
+
+		if ('speechSynthesis' in window) {
+		// Synthesis support. Make your web apps talk!
+			window.speechSynthesis.speak(msg);
+		} else {
+			console.log("Text-to-speech is not supported in your browser :(");
+		}
+		
+		if ('SpeechRecognition' in window) {
+			// Speech recognition support. Talk to your apps!
+		}
+	}
+
+	// NOT IN USE
 	function convertoFloat32ToInt16(buffer) {
 		var l = buffer.length;
 		var buf = new Int16Array(l)
 
 		while (l--) {
-				buf[l] = buffer[l] * 0xFFFF; //convert to 16 bit
+			buf[l] = buffer[l] * 0xFFFF; //convert to 16 bit
 		}
 		return buf.buffer
 	}
 
+	// NOT IN USE
 	var convertBufferToStream = function(buffer) {
 		var interleaved = new Float32Array(buffer.getChannelData(0));
 
@@ -195,7 +286,8 @@ $( document ).ready(function() {
 	}
 
 	// see: https://github.com/streamproc/MediaStreamRecorder#upload-to-php-server
-	var sendStream = function(chunks) {
+	// NOT IN USE
+	var sendStream_notinuse = function(chunks) {
 		// blob = new Blob(chunks, {
 		// 	type: 'audio/wav'
 		// });
@@ -209,6 +301,12 @@ $( document ).ready(function() {
 		formData.append(fileType + '-filename', fileName);
 		formData.append(fileType + '-blob', blob);
 
+		makeHttpRequest(formData);
+
+	};
+
+	// sends formdata with chunks to server
+	var makeHttpRequest = function(formData) {
 		var jqxhr = $.ajax({
 			url: 'server.php',
 			data: formData,
@@ -225,8 +323,7 @@ $( document ).ready(function() {
 			.fail(function() {
 				console.log( "error" );
 			});
-
-	};
+	}
 
 	// send stop command to server, gets json
 	var evaluateStream = function() {
@@ -237,6 +334,10 @@ $( document ).ready(function() {
 
 	// add event to button
 	$record.one('click', getPermission);
+
+	$speak.on('click', function(event) {
+		speak('Hallo Du, wie geht es dir? haus pferd');
+	});
 
 	// record.trigger('click');
 

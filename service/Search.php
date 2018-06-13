@@ -13,7 +13,7 @@ use Google_Client;
 class Search /*implements \IteratorAggregate*/ {
 
     // Create one or more API keys at https://console.developers.google.com/apis/credentials
-    const GCSE_API_KEY = "AIzaSyBAJFhsgtwCaduXytmC1pI98Y6jZ5rbzHQ";
+    
     private $apiKey;
 
     /* The search engine id is specific to each "custom search engine"
@@ -25,7 +25,6 @@ class Search /*implements \IteratorAggregate*/ {
 
     * If you fail to enable the Custom Search API before you try to execute a search
     * the exception that is thrown will indicate this.  */
-    const GCSE_SEARCH_ENGINE_ID = "007429278408352853183:6jmfgu6p5ag";
     private $gcse;
 
     // Holds the GoogleService for reuse

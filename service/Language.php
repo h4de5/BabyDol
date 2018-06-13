@@ -65,8 +65,54 @@ class Language {
     }
 
     public function getNouns($anotation) {
+        $nouns = [];
+
         $tokens = $anotation->tokensByTag('NOUN');
-        return $tokens; 
+        if(!empty($tokens)) {
+            foreach ($tokens as $idx2 => $noundata) {
+                // var_export($noundata);
+
+                $noun = $noundata['text']['content'];
+                $nouns[$noun] = ['word' => $noun];
+
+                if(!empty($noundata['partOfSpeech'])) {
+                    // 'partOfSpeech' => 
+                    // array (
+                    //     'tag' => 'NOUN',
+                    //     'aspect' => 'ASPECT_UNKNOWN',
+                    //     'case' => 'NOMINATIVE',
+                    //     'form' => 'FORM_UNKNOWN',
+                    //     'gender' => 'NEUTER',
+                    //     'mood' => 'MOOD_UNKNOWN',
+                    //     'number' => 'SINGULAR',
+                    //     'person' => 'THIRD',
+                    //     'proper' => 'NOT_PROPER',
+                    //     'reciprocity' => 'RECIPROCITY_UNKNOWN',
+                    //     'tense' => 'TENSE_UNKNOWN',
+                    //     'voice' => 'VOICE_UNKNOWN',
+                    // ),
+                    if($noundata['partOfSpeech']['number'] == 'PLURAL') {
+                        $nouns[$noun]['article'] = 'die';
+                    } else {
+                        switch ($noundata['partOfSpeech']['gender']) {
+                            case 'NEUTER':
+                                $nouns[$noun]['article'] = 'das';
+                            break;
+                            case 'MASCULINE':
+                                $nouns[$noun]['article'] = 'der';
+                            break;
+                            case 'FEMININE':
+                                $nouns[$noun]['article'] = 'die';
+                            break;
+                            default:
+                                $nouns[$noun]['article'] = '';
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return $nouns;
     }
 
 

@@ -41,6 +41,7 @@
 		</ul>
 
 		<input type="button" id="record" value="start record" />
+		<input type="button" id="speak" value="speak to me" />
 		<br />
 		<audio id="player" controls></audio>
 	</section>
@@ -97,10 +98,12 @@
 		</ul>
 		</section>
 
+	<!-- full jquery -->
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<!-- webrtc to access stream from browser + crossbrowser adapter -->
+	<script src="//cdn.WebRTC-Experiment.com/MediaStreamRecorder.js"></script>
+	<script src="//webrtc.github.io/adapter/adapter-latest.js"></script>
 	<script src="js/main.js"></script>
 
-
 </body>
-
 </html>
