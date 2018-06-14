@@ -39,10 +39,14 @@ class Speech {
 
         if(!empty($results)) {
             foreach ($results as $result) {
+                foreach ($result->alternatives() as $idx => $alternative) {
+                    if($idx > 2) continue;
+                    $transcription[] = $alternative['transcript'];
+                }
                 // echo $result->topAlternative()['transcript'] . "\n";
                 // echo 'Transcription: ' . $result->topAlternative()['transcript'] . PHP_EOL;
                 // echo 'Transcription: ' . $result->alternatives()[0]['transcript'] . PHP_EOL;
-                $transcription[] = $result->topAlternative()['transcript'];
+                // $transcription[] = $result->topAlternative()['transcript'];
             }
         }
 

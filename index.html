@@ -34,18 +34,28 @@
 		<ul>
 			<li>Press "start record"</li>
 			<li>Allow access to your microphone</li>
-			<li>Press "play button" to echo your self</li>
+			<li>Press "stop recording" to start evaluation</li>
+			<li>wait..</li>
 			<li>WIP..</li>
 			<li>select one of the suggestions, or enter your own work to teach the algorithm</li>
 			<li>see a picture and listen to the correct spelling of the word</li>
 		</ul>
 
 		<input type="button" id="record" value="start record" />
-		<input type="button" id="speak" value="speak to me" />
+		<input type="button" id="speak" value="redo" />
 		<br />
-		<audio id="player" controls></audio>
+
 	</section>
-	<section class="footer">
+	<section class="result">
+		<div id="result-container">
+			<div id="result-stub" style="display:none;">
+				<img src="" title="" alt="" /><br />
+				<span>Das Beispiel</span>
+			</div>
+
+		</div>
+	</section>
+	<section class="footer" style="display: none;">
 		<h4>HowIs</h4>
 		<ul>
 			<li>on document.ready</li>

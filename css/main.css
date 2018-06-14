@@ -17,3 +17,17 @@ section.footer {
 	font-size: smaller;
 	color: grey;
 }
+
+
+.result-element {
+	display: inline-block;
+	border: 1px solid black;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 5px;
+	cursor: pointer;
+}
+
+.result-element:hover {
+	background-color: #a1a1f5;
+}

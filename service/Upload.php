@@ -96,6 +96,8 @@ class Upload {
         }
         fclose($handle);
 
+        unlink($chunk);
+
         return $targetPath;
     }
 
