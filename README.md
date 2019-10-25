@@ -37,6 +37,7 @@ Also Usage of cloud services and the Custom Search API is subject to billing - b
 ## Installation
 - `git clone` the repository in a directory of your choice.
 - go to that directory and install the latest dependencies by executing `php composer.phar install`
+- execute `php composer.phar install` twice in order to let the post-install-cmd script kick in.
 - you should have gotten two json files from the Preparation step - copy them into the [config](config) folder
 - open the [server.php](web/server.php) file and adapt the name of your project and the path of the credential files
 - you may change the LANGUAGE_CODE there as well - see supported languages in the [natural language documentation](https://cloud.google.com/natural-language/)
