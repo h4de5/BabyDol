@@ -192,8 +192,14 @@ $( document ).ready(function() {
 
 	var evaluateResult = function(data) {
 
+    clearError();
+
+    if(typeof data === 'string') {
+      $container = $("#error-container");
+      showError($container, "raw Output", data);
+    }
     if(data.error) {
-      clearError();
+      $container = $("#error-container");
 
       data.error.forEach(element => {
         showError($container, element, '');

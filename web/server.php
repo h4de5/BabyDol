@@ -4,8 +4,14 @@ ob_start();
 
 require '../vendor/autoload.php';
 
+https: //console.developers.google.com/iam-admin/serviceaccounts?folder=&organizationId=&project=babydol-upheld-archway-205100
 define("PROJECT_ID", 'babydol-upheld-archway-205100');
-define("PROJECT_CREDENTIALS_FILE", '../config/BabyDol-cloud-token-1074b826b0e5.json');
+define("PROJECT_CREDENTIALS_FILE", '../config/babydol-upheld-archway-205100-39ddca1906c1.json');
+
+// Create one or more API keys at https://console.developers.google.com/apis/credentials
+define("SEARCH_API_KEY", '../config/apikey-token.json');
+
+// langauge for text recognizion
 define("LANGUAGE_CODE", 'de-DE');
 
 putenv('GOOGLE_APPLICATION_CREDENTIALS=' . PROJECT_CREDENTIALS_FILE);

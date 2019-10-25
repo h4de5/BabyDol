@@ -175,7 +175,7 @@ class Controller {
 		// $words['haus'] = ['noun' => 'haus'];
 
 		if (!empty($words)) {
-			$googleSearch = new Search("BabyDol Search", $this->base_dir . "/config/apikey-token.json");
+			$googleSearch = new Search("BabyDol Search", SEARCH_API_KEY);
 
 			$optParams = [
 				//'imgType' => 'clipart'
