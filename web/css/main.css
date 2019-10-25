@@ -19,7 +19,7 @@ section.footer {
 }
 
 
-.result-element {
+.result-element, .transcript-element {
 	display: inline-block;
 	border: 1px solid black;
 	border-radius: 2px;
@@ -31,3 +31,24 @@ section.footer {
 .result-element:hover {
 	background-color: #a1a1f5;
 }
+
+.error-element {
+	display: inline-block;
+	border: 1px solid red;
+	border-radius: 2px;
+	padding: 5px;
+	margin: 5px;
+}
+
+.error-element:hover {
+	background-color: lightgoldenrodyellow;
+}
+
+.error-element .error-message {
+  color: red;
+}
+/* 
+.error-element .raw_output {
+  color: red;
+} */
+

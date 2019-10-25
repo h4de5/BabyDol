@@ -7,12 +7,11 @@
 
 $( document ).ready(function() {
 	// input audio stream
-	var streams;
+	// var streams;
 	var mediaRecorder;
 
-
-	var $record = $('#record');
-	var $speak = $('#speak');
+  var $record = $('#record');
+  var $analyse = $('#analyse');
 
 	// see explanation: https://stackoverflow.com/a/15104053/2115610
 	// NOT IN USE
@@ -20,7 +19,7 @@ $( document ).ready(function() {
 	// var source = context.createMediaStreamSource(stream);
 	//var source;
 	// var source = context.createBufferSource();
-	//var processor = context.createScriptProcessor(16384, 1, 1);
+  //var processor = context.createScriptProcessor(16384, 1, 1);
 
 	////// WEBRTC MediaRecorder
 	// see: https://github.com/streamproc/MediaStreamRecorder
@@ -67,7 +66,7 @@ $( document ).ready(function() {
 		//mediaRecorder.bufferSize = 1024 * 16;
 		mediaRecorder.sampleRate = 44100;
 		//mediaRecorder.sampleRate = 16000;
-		
+
 
 		mediaRecorder.ondataavailable = function(blob) {
 			sendStream(blob);
@@ -75,65 +74,40 @@ $( document ).ready(function() {
 		mediaRecorder.onstop = function() {
 			// recording has been stopped.
 			console.log('recording has been stopped.');
-			//stopRecord();
 		};
 
 		var formData = new FormData();
 		formData.append('action', 'begin');
-		makeHttpRequest(formData, function(data) {});
+		makeHttpRequest(formData, evaluateResult);
 
 		// get blob after specific time interval ms
 		mediaRecorder.start(1000);
 
 		$record.val("recording..");
-		$record.one('click', stopRecord);
+    $record.one('click', stopRecord);
+    $analyse.prop('disabled', true);
 
 	};
 
 	var onMediaError = function(err) {
-		stopRecord();
-		console.log("Stream access failed: ", err.message);
-	}
+		stopRecord(false);
+    console.log("Stream access failed: ", err.message);
 
-	var sendStream = function(blob) {
-		
-		var file = new File([blob], 'msr-' + (new Date).toISOString().replace(/:|\./g, '-') + '.pcm', {
-			type: 'audio/pcm'
-		});
-	
-		// create FormData
-		var formData = new FormData();
-		formData.append('action', 'upload');
-		formData.append('audio-filename', file.name);
-		formData.append('audio-blob', blob);
-	
-		makeHttpRequest(formData, function(data) {});
-	};
+    $container = $("#error-container");
+    showError($container, "onMediaError", "Stream access failed: " + err.message);
+  }
 
-	var stopRecord = function() {
-		console.log('stopRecord..');
-
-		// TODO - send concat command to server
-		mediaRecorder.stop();
-		$record.val("start record");
-		$record.one('click', getPermission);
-
-		var formData = new FormData();
-		formData.append('action', 'end');
-		makeHttpRequest(formData, evaluateResult );
-	};
-
-	// asks user for permissions
+  // asks user for permissions
 	var getPermission = function() {
-		console.log('getPermission..');
+    clearError();
 
+		console.log('getPermission..');
 		$record.val("waiting for permission..");
 
 		// prepareMediaDevices();
 
 		if(navigator.mediaDevices) {
 			console.log('supported constraints:', navigator.mediaDevices.getSupportedConstraints());
-
 			captureUserMedia({audio: true}, onMediaSuccess, onMediaError);
 
 			/*
@@ -147,9 +121,44 @@ $( document ).ready(function() {
 			});
 			*/
 		} else {
-			stopRecord();
-			console.log("Stream access failed: no mediaDevices found - update chrome?");
+			stopRecord(false);
+      console.log("Stream access failed: no mediaDevices found - update chrome?");
+      $container = $("#error-container");
+      showError($container, "getPermission", "Stream access failed: no mediaDevices found - update chrome?");
 		}
+  };
+
+
+	var sendStream = function(blob) {
+
+		var file = new File([blob], 'msr-' + (new Date).toISOString().replace(/:|\./g, '-') + '.pcm', {
+			type: 'audio/pcm'
+		});
+
+		// create FormData
+		var formData = new FormData();
+		formData.append('action', 'upload');
+		formData.append('audio-filename', file.name);
+		formData.append('audio-blob', blob);
+
+		makeHttpRequest(formData, evaluateResult);
+	};
+
+	var stopRecord = function(analysis = true) {
+		console.log('stopRecord..');
+
+		// TODO - send concat command to server
+		mediaRecorder.stop();
+    $record.one('click', getPermission);
+    $record.val("start record");
+
+    if(analysis) {
+      console.log("analyse record..")
+      $analyse.trigger( "click" );
+    }
+		// var formData = new FormData();
+		// formData.append('action', 'end');
+		// makeHttpRequest(formData, evaluateResult );
 	};
 
 	var speak = function( text ) {
@@ -159,20 +168,56 @@ $( document ).ready(function() {
 		// Synthesis support. Make your web apps talk!
 			window.speechSynthesis.speak(msg);
 		} else {
-			console.log("Text-to-speech is not supported in your browser :(");
+      console.log("Text-to-speech is not supported in your browser :(");
+      $container = $("#error-container");
+      showError($container, "getPermission", "Text-to-speech is not supported in your browser :(");
 		}
-		
+
 		if ('SpeechRecognition' in window) {
 			// Speech recognition support. Talk to your apps!
 		}
-	}
+  }
+
+  var showError = function($container, element, html) {
+    $error = $("#error-stub").clone().prop({ id: "id-"+element.replace(/ /g,"_"), class: "error-element"});
+    $error.children("div").text(element);
+    $error.children("span").html(html);
+    $error.show();
+    $error.appendTo($container);
+  }
+  var clearError = function() {
+    $container = $("#error-container");
+    $container.children( ".error-element" ).remove();
+  }
 
 	var evaluateResult = function(data) {
-		/*
-		if(data.transcript) {
-			speak(data.transcript);
-		}
-		*/
+
+    if(data.error) {
+      clearError();
+
+      data.error.forEach(element => {
+        showError($container, element, '');
+      });
+
+      if(typeof data.raw_output != 'undefined') {
+        showError($container, "raw Output", data.raw_output);
+      }
+    }
+
+    if(data.transcript) {
+
+      $container = $("#transcript-container");
+      $container.children( ".transcript-element" ).remove();
+
+      $transcript = $("#transcript-stub").clone().prop({ id: "id-transcript", class: "transcript-element"});
+      $transcript.children("div").text(data.transcript);
+      $transcript.on('click', function() { speak(data.transcript); });
+
+      $transcript.show();
+      $transcript.appendTo($container);
+
+    }
+
 		if(data.words) {
 			// console.log('found words: ', data.words);
 			$container = $("#result-container");
@@ -188,7 +233,7 @@ $( document ).ready(function() {
 				$word = $("#result-stub").clone().prop({ id: "id-"+element.word, name: name, class: "result-element"});
 				$word.children("img").attr({src: element.picture, title: name, alt: name});
 				$word.children("span").text(name);
-				
+
 				$word.on('click', function() { speak(name); });
 
 				$word.show();
@@ -197,36 +242,44 @@ $( document ).ready(function() {
 		}
 	}
 
-	// sends formdata with chunks to server
+  // sends formdata with chunks to server
+  // will be also triggered at the start and the end of a record
 	var makeHttpRequest = function(formData, callback) {
 		var jqxhr = $.ajax({
 			url: 'server.php',
 			data: formData,
 			processData: false,
 			contentType: false,
-			type: 'POST',
-			success: function(data){
+      type: 'POST'
+      })
+			.done(function(data){
 				console.log("success: ", data);
 				callback(data);
-			}
 		  })
-		  	.done(function() {
-				console.log( "second success" );
-			})
-			.fail(function() {
-				console.log( "error" );
+			.fail(function(data) {
+        console.log( "error", data );
+        callback(data.responseJSON);
+      })
+      .always(function() {
+        if(formData.has('action') && formData.get('action') == 'end') {
+          console.log( "this should only come at the end", formData, formData.has('action'));
+          $record.prop('disabled', false);
+          $analyse.prop('disabled', false);
+          $analyse.val("redo analysis");
+        }
 			});
-	}
+  }
 
-	// add event to button
+  // add event to button
 	$record.one('click', getPermission);
 
-	$speak.on('click', function(event) {
+	$analyse.on('click', function(event) {
 		var formData = new FormData();
-		formData.append('action', 'end');
-		makeHttpRequest(formData, evaluateResult );
+    formData.append('action', 'end');
+    makeHttpRequest(formData, evaluateResult );
+    $analyse.val("analysing..");
+    $analyse.prop('disabled', true);
+    $record.prop('disabled', true);
 	});
-
-	// record.trigger('click');
 
 });

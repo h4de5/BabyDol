@@ -3,3 +3,5 @@
 composer.lock
 vendor/
 uploads/
+config/
+babydol.code-workspace

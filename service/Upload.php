@@ -1,104 +1,105 @@
 <?php
-
 namespace h4de5\BabyDol;
 
 class Upload {
 
-    /**
-     * path to upload directory
-     *
-     * @var string
-     */
-    private $uploadPath;
+	/**
+	 * path to upload directory
+	 *
+	 * @var string
+	 */
+	/**
+	 * @param $uploadPath
+	 */
+	private $uploadPath;
 
-    function __construct ($uploadPath) {
-        $this->uploadPath = $uploadPath;
-    }
+	public function __construct($uploadPath) {
+		$this->uploadPath = $uploadPath;
+	}
 
-    public function getUploadPath() {
-        return rtrim($this->uploadPath, '/'). '/';
-    }
+	public function getUploadPath() {
+		return rtrim($this->uploadPath, '/') . '/';
+	}
 
-    /**
-     * checks if upload file is set in $post and $files
-     *
-     * @param string $formFilename
-     * @param string $formFilefield
-     * @return boolean
-     */
-    public function isUpload($formFilename, $formFilefield) {
-        if(!isset($_POST[$formFilename]) || !isset($_FILES[$formFilefield])) {
-            return false;
-        }
-        return true;
-    }
+	/**
+	 * checks if upload file is set in $post and $files
+	 *
+	 * @param string $formFilename
+	 * @param string $formFilefield
+	 * @return boolean
+	 */
+	public function isUpload($formFilename, $formFilefield) {
+		if (!isset($_POST[$formFilename]) || !isset($_FILES[$formFilefield])) {
+			return false;
+		}
+		return true;
+	}
 
-    /**
-     * get files via post, save it to file system
-     *
-     * @param string $formFilename form field
-     * @param string $formFilefield
-     * @return string saved filename
-     */
-    public function fetch($formFilename, $formFilefield) {
+	/**
+	 * get files via post, save it to file system
+	 *
+	 * @param string $formFilename form field
+	 * @param string $formFilefield
+	 * @return string saved filename
+	 */
+	public function fetch($formFilename, $formFilefield) {
 
-        if (!$this->isUpload($formFilename, $formFilefield)) {
-            throw \Exception("Upload fields not found");
-        }
-    
-        $fileName = trim($_POST[$formFilename]);
-        $tempName = $_FILES[$formFilefield]['tmp_name'];
+		if (!$this->isUpload($formFilename, $formFilefield)) {
+			throw \Exception("Upload fields not found");
+		}
 
-        if (empty($fileName) || empty($tempName)) {
-            throw \Exception("Upload fields empty");
-        }
-        $filePath = $this->getUploadPath() . $fileName;
-    
-        // make sure that one can upload only allowed audio/video files
-        $allowed = array(
-            'pcm',
-            'wav',
-        );
-        $extension = pathinfo($filePath, PATHINFO_EXTENSION);
-        if (!$extension || empty($extension) || !in_array($extension, $allowed)) {
-            throw \Exception("File extension not permitted");
-        }
-    
-        if (!move_uploaded_file($tempName, $filePath)) {
-            throw \Exception("Saving uploaded file failed");
-        }
+		$fileName = trim($_POST[$formFilename]);
+		$tempName = $_FILES[$formFilefield]['tmp_name'];
 
-        return $filePath;
-    }
+		if (empty($fileName) || empty($tempName)) {
+			throw \Exception("Upload fields empty");
+		}
+		$filePath = $this->getUploadPath() . $fileName;
 
+		// make sure that one can upload only allowed audio/video files
+		$allowed = [
+			'pcm',
+			'wav'
+		];
+		$extension = pathinfo($filePath, PATHINFO_EXTENSION);
+		if (!$extension || empty($extension) || !in_array($extension, $allowed)) {
+			throw \Exception("File extension not permitted");
+		}
 
-    /**
-     * concatinates files, adds file chunk to target
-     *
-     * @param string $chunk
-     * @param string $target
-     * @return string
-     */
-    public function concat($chunk, $targetName) {
+		if (!move_uploaded_file($tempName, $filePath)) {
+			throw \Exception("Saving uploaded file failed");
+		}
 
-        $targetPath = $this->getUploadPath() . $targetName;
+		return $filePath;
+	}
 
-        $handle = fopen($chunk, "r");
-        $contents = fread($handle, filesize($chunk));
-        fclose($handle);
+	/**
+	 * concatinates files, adds file chunk to target
+	 *
+	 * @param string $chunk
+	 * @param string $target
+	 * @return string
+	 */
+	public function concat($chunk, $targetName) {
 
-        if (!$handle = fopen($targetPath, "a")) {
-            throw \Exception("Could not open target file for appending");
-        }
+		$targetPath = $this->getUploadPath() . $targetName;
 
-        if (!fwrite($handle, $contents)) {
-            throw \Exception("Could not write to target file");
-        }
-        fclose($handle);
+		$handle = fopen($chunk, "r");
+		$contents = fread($handle, filesize($chunk));
+		fclose($handle);
 
-        unlink($chunk);
+		if (!$handle = fopen($targetPath, "a")) {
+			throw \Exception("Could not open target file for appending");
+		}
 
-        return $targetPath;
-    }
+		if (!fwrite($handle, $contents)) {
+			throw \Exception("Could not write to target file");
+		}
+		fclose($handle);
+
+		unlink($chunk);
+
+		return $targetPath;
+	}
 
 }
