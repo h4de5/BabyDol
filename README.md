@@ -39,3 +39,5 @@ Also Usage of cloud services and the Custom Search API is subject to billing - b
 - go to that directory and install the latest dependencies by executing `php composer.phar install`
 - the `web` directory should be used as document root by your webserver
 - once you see the website follow the instructions there
+
+![image](https://user-images.githubusercontent.com/6115324/67603241-a6e9ff00-f778-11e9-9c9c-6a39a84004f0.png)
