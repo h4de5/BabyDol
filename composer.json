@@ -4,6 +4,12 @@
     "google/cloud-language": "~0.14",
     "google/apiclient": "~2.2"
   },
+  "scripts": {
+    "post-install-cmd": [
+      "mkdir -m 755 config",
+      "mkdir -m 777 uploads"
+    ]
+  },
   "autoload": {
     "psr-4": {
       "h4de5\\BabyDol\\": "service/"
