@@ -10,7 +10,7 @@ This tool let you:
 
 ## Preparation
 You will need a web server and PHP>=7
-If you don't have it yet - get composer: https://getcomposer.org/doc/00-intro.md
+If you don't have it yet [get composer](https://getcomposer.org/doc/00-intro.md)
 
 You need to create two API KEY Credentials from Google's API and Cloud Console:
 
@@ -37,7 +37,12 @@ Also Usage of cloud services and the Custom Search API is subject to billing - b
 ## Installation
 - `git clone` the repository in a directory of your choice.
 - go to that directory and install the latest dependencies by executing `php composer.phar install`
-- the `web` directory should be used as document root by your webserver
+- you should have gotten two json files from the Preparation step - copy them into the [config](config) folder
+- open the [server.php](web/server.php) file and adapt the name of your project and the path of the credential files
+- you may change the LANGUAGE_CODE there as well - see supported languages in the [natural language documentation](https://cloud.google.com/natural-language/)
+- the [web](web) directory should be used as document root by your webserver
 - once you see the website follow the instructions there
+
+## Usage
 
 ![image](https://user-images.githubusercontent.com/6115324/67603241-a6e9ff00-f778-11e9-9c9c-6a39a84004f0.png)

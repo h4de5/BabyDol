@@ -1,8 +1,7 @@
 <?php
-
 ob_start();
 
-require '../vendor/autoload.php';
+// YOU MAY CHANGE THE CREDENTIALS HERE
 
 // https://console.developers.google.com/iam-admin/serviceaccounts?folder=&organizationId=&project=babydol-upheld-archway-205100
 define("PROJECT_ID", 'babydol-upheld-archway-205100');
@@ -11,12 +10,15 @@ define("PROJECT_CREDENTIALS_FILE", '../config/babydol-upheld-archway-205100-39dd
 // Create one or more API keys at https://console.developers.google.com/apis/credentials
 define("SEARCH_API_KEY", '../config/apikey-token.json');
 
-// langauge for text recognizion
+// language for text recognizion
 define("LANGUAGE_CODE", 'de-DE');
+
+// YOU MAY STOP TO CHANGE STUFF BEYOND HERE
 
 putenv('GOOGLE_APPLICATION_CREDENTIALS=' . PROJECT_CREDENTIALS_FILE);
 
-// use Google\Cloud\Core\ServiceBuilder;
+require '../vendor/autoload.php';
+
 use h4de5\BabyDol\Controller;
 
 $controller = new Controller('..');
