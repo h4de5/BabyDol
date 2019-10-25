@@ -268,7 +268,7 @@ $( document ).ready(function() {
       })
       .always(function() {
         if(formData.has('action') && formData.get('action') == 'end') {
-          console.log( "this should only come at the end", formData, formData.has('action'));
+          // console.log( "this should only come at the end", formData, formData.has('action'));
           $record.prop('disabled', false);
           $analyse.prop('disabled', false);
           $analyse.val("redo analysis");

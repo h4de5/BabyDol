@@ -35,7 +35,7 @@ class Controller {
 				$result = $this->endAction();
 				break;
 			default:
-				$result = $this->errorAction($message);
+				$result = $this->errorAction($action);
 				break;
 		}
 		if ('error' == $result['status']) {
@@ -96,7 +96,7 @@ class Controller {
 		if ($upload->isUpload('audio-filename', 'audio-blob')) {
 
 			$filepath = $upload->fetch('audio-filename', 'audio-blob');
-			$targetFile = $upload->concat($filepath, 'target.pcm');
+			$upload->concat($filepath, 'target.pcm');
 
 			$result = ['status' => 'ok'];
 		} else {
@@ -125,7 +125,7 @@ class Controller {
 	protected function endAction() {
 		$result = [];
 		$words = [];
-		$fulltranscript = [];
+		// $fulltranscript = [];
 
 		// if no upload, run recognition
 		$targetFile = $this->base_dir . "/uploads/target.pcm";
