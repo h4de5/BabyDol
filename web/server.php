@@ -4,7 +4,7 @@ ob_start();
 
 require '../vendor/autoload.php';
 
-https: //console.developers.google.com/iam-admin/serviceaccounts?folder=&organizationId=&project=babydol-upheld-archway-205100
+// https://console.developers.google.com/iam-admin/serviceaccounts?folder=&organizationId=&project=babydol-upheld-archway-205100
 define("PROJECT_ID", 'babydol-upheld-archway-205100');
 define("PROJECT_CREDENTIALS_FILE", '../config/babydol-upheld-archway-205100-39ddca1906c1.json');
 
